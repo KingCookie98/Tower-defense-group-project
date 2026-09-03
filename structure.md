@@ -1,6 +1,6 @@
 # File structure 
-- Towers
-- Monstre
+- Tower
+- Monster
 - Map
 - Hud
 - Penge system
