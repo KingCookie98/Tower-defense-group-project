@@ -1,0 +1,17 @@
+
+Det jeg skal lave på projektet er:
+
+**Tårn:**
+
+- Spillet skal indeholde én type tårn.
+- Et tårn skal automatisk kunne skyde på monstre inden for dets rækkevidde.
+- Et tårn kan maksimalt skyde et skud hvert sekund.
+
+**Skud:**
+skudende skal være en fil for sig selv!
+- Alle skud skal ramme deres mål.
+- Skuddets skade skal være en tredjedel af monsterets liv.
+
+Jeg kan ikke gøre til den kan sættes på banen endnu, da Set lige skal designe den først.
+Jeg kan dog lave tårnet og skuddene og så tårnet kan skyde/ramme monstrene
+monstrene designer Storingaard.
