@@ -9,5 +9,11 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #f0f0f0;
+    background: #000000;
+}
+
+#game {
+    display: grid;
+    grid-template-columns: repeat(10, 50px);
+    gap: 2px;
 }
