@@ -30,9 +30,9 @@ for (let y = 0; y < map.length; y++) {
         } else if (map[y][x] === 1) {
             tile.style.backgroundColor = "#6a3006";
         } else if (map[y][x] === 2) {
-            tile.style.backgroundColor = "#05fa05";
+            tile.style.backgroundColor = "#05fa0549";
         } else if (map[y][x] === 3) {
-            tile.style.backgroundColor = "#ff0000";
+            tile.style.backgroundColor = "#ff00003e";
         }
 
         game.appendChild(tile);
