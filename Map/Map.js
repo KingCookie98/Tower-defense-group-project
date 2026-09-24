@@ -22,8 +22,8 @@ for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
         const tile = document.createElement("div");
 
-        tile.style.width = "50px";
-        tile.style.height = "50px";
+        tile.style.width = "65px";
+        tile.style.height = "65px";
 
         if (map[y][x] === 0) {
             tile.style.backgroundColor = "#099309";
