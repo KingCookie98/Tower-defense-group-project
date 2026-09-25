@@ -9,7 +9,17 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #000000;
+    padding: 24px;
+    background: #080d15;
+}
+
+canvas {
+    display: block;
+    width: min(800px, calc(100vw - 48px)) !important;
+    height: min(600px, calc((100vw - 48px) * 0.75)) !important;
+    border: 1px solid #2d4c5e;
+    border-radius: 12px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
 }
 
 #game {
