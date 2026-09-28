@@ -6,11 +6,26 @@ class Monster {
     this.pathIndex = 1;
     this.speed = 75;
     this.radius = 25;
+    this.isBoss = false;
     this.reachedEnd = false;
     this.maxHealth = 5;
     this.health = 5;
     this.rewarded = false;
     this.hitFlash = 0;
+  }
+
+  takeDamage(amount) {
+    if (this.health <= 0) {
+      return;
+    }
+
+    this.health = max(0, this.health - amount);
+    this.hitFlash = 8;
+
+    if (this.health === 0 && !this.rewarded) {
+      this.rewarded = true;
+      addMoney(MONSTER_REWARD);
+    }
   }
 
   draw() {
@@ -48,7 +63,11 @@ class Monster {
     if (this.path.length > 0 && this.pathIndex >= this.path.length && !this.reachedEnd) {
       this.reachedEnd = true;
       if (typeof checkMonsterCollision === "function") {
-        checkMonsterCollision(Math.floor(this.y / TILE_SIZE), Math.floor(this.x / TILE_SIZE));
+        checkMonsterCollision(
+          Math.floor(this.y / TILE_SIZE),
+          Math.floor(this.x / TILE_SIZE),
+          this.isBoss
+        );
       }
       this.health = 0;
     }
@@ -109,6 +128,7 @@ function mousePressed() {
 class BossMonster extends Monster {
   constructor(x, y, path) {
     super(x, y, path);
+    this.isBoss = true;
     this.maxHealth = 15;
     this.health = this.maxHealth;
   }

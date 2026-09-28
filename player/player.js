@@ -1,6 +1,5 @@
 let playerHealth = 100;
 const playerMaxHealth = 100;
-let lastDamageTime = 0;
 
 const healthContainer = document.createElement("div");
 const healthBar = document.createElement("div");
@@ -41,13 +40,16 @@ function damagePlayer(amount) {
 	updateHealthBar();
 }
 
-function checkMonsterCollision(monsterRow, monsterColumn) {
-	const now = Date.now();
+function checkMonsterCollision(monsterRow, monsterColumn, isBoss = false) {
 	const monsterIsOnEndTile = map[monsterRow]?.[monsterColumn] === TILE.END;
 
-	if (monsterIsOnEndTile && now - lastDamageTime >= 1000) {
+	if (monsterIsOnEndTile) {
+		if (isBoss) {
+			damagePlayer(playerHealth);
+			return;
+		}
+
 		damagePlayer(10);
-		lastDamageTime = now;
 	}
 }
 
