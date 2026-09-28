@@ -7,11 +7,13 @@ class Monster {
     this.speed = 75;
     this.radius = 25;
     this.isBoss = false;
+    this.monsterColor = color(120, 210, 120);
+    this.monsterHitColor = color(50, 90, 50);
+    this.hitFlashFrames = 0;
     this.reachedEnd = false;
     this.maxHealth = 5;
     this.health = 5;
     this.rewarded = false;
-    this.hitFlash = 0;
   }
 
   takeDamage(amount) {
@@ -20,7 +22,7 @@ class Monster {
     }
 
     this.health = max(0, this.health - amount);
-    this.hitFlash = 8;
+  this.hitFlashFrames = 8;
 
     if (this.health === 0 && !this.rewarded) {
       this.rewarded = true;
@@ -34,8 +36,7 @@ class Monster {
     }
 
     this.move(deltaTime / 1000);
-    this.hitFlash = max(0, this.hitFlash - 1);
-
+  this.hitFlashFrames = max(0, this.hitFlashFrames - 1);
     this.drawMonster();
   }
 
@@ -78,12 +79,7 @@ class Monster {
       return;
     }
 
-    if (this.hitFlash > 0) {
-      fill(50, 90, 50); // RGB Color for the monster when hit
-    } else {
-      fill(120, 210, 120); // RGB Color for the monster when its not getting hit
-    }
-
+    fill(this.hitFlashFrames > 0 ? this.monsterHitColor : this.monsterColor);
     stroke(0);
     circle(this.x, this.y, this.radius * 2);
 
@@ -131,6 +127,8 @@ class BossMonster extends Monster {
   constructor(x, y, path) {
     super(x, y, path);
     this.isBoss = true;
+    this.monsterColor = color(139, 0, 0);
+    this.monsterHitColor = color(80, 0, 0);
     this.maxHealth = 15;
     this.health = this.maxHealth;
   }
