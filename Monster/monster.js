@@ -6,6 +6,7 @@ class Monster {
     this.pathIndex = 1;
     this.speed = 75;
     this.radius = 25;
+    this.reachedEnd = false;
     this.maxHealth = 5;
     this.health = 5;
     this.hitFlash = 0;
@@ -41,6 +42,14 @@ class Monster {
         this.y += deltaY / distanceToTarget * distanceToMove;
         distanceToMove = 0;
       }
+    }
+
+    if (this.path.length > 0 && this.pathIndex >= this.path.length && !this.reachedEnd) {
+      this.reachedEnd = true;
+      if (typeof checkMonsterCollision === "function") {
+        checkMonsterCollision(Math.floor(this.y / TILE_SIZE), Math.floor(this.x / TILE_SIZE));
+      }
+      this.health = 0;
     }
   }
 
@@ -80,12 +89,19 @@ function setup() {
 
 function draw() {
   drawMap();
+  waveSpawner.drawStartButton();
   monsters = monsters.filter(currentMonster => currentMonster.health > 0);
   waveSpawner.update(monsters);
   updateTowers(monsters);
   drawTowers();
   for (const currentMonster of monsters) {
     currentMonster.draw();
+  }
+}
+
+function mousePressed() {
+  if (waveSpawner && waveSpawner.startWaveAt(mouseX, mouseY)) {
+    return false;
   }
 }
 
