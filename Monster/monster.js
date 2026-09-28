@@ -1,8 +1,8 @@
 class Monster {
-  constructor() {
-    this.x = 300;
-    this.y = 240;
-    this.radius = 30;
+  constructor(x = 300, y = 240) {
+    this.x = x;
+    this.y = y;
+    this.radius = 25;
     this.maxHealth = 5;
     this.health = 5;
     this.hitFlash = 0;
@@ -56,26 +56,28 @@ class Monster {
   }
 }
 
-let monster = new Monster();
+let monsters = [];
+let waveSpawner;
 
 function setup() {
   createCanvas(map[0].length * TILE_SIZE, map.length * TILE_SIZE);
+  waveSpawner = new WaveSpawner();
 }
 
 function draw() {
   drawMap();
-  updateTowers([monster]);
+  monsters = monsters.filter(currentMonster => currentMonster.health > 0);
+  waveSpawner.update(monsters);
+  updateTowers(monsters);
   drawTowers();
-  monster.draw();
-}
-
-function drawMonster() {
-  monster.drawMonster();
+  for (const currentMonster of monsters) {
+    currentMonster.draw();
+  }
 }
 
 class BossMonster extends Monster {
-  constructor() {
-    super();
+  constructor(x, y) {
+    super(x, y);
     this.maxHealth = 15;
     this.health = this.maxHealth;
   }
