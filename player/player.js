@@ -4,6 +4,7 @@ const playerMaxHealth = 100;
 const healthContainer = document.createElement("div");
 const healthBar = document.createElement("div");
 const healthText = document.createElement("div");
+const healthLabel = document.createElement("span");
 
 healthContainer.style.position = "fixed";
 healthContainer.style.top = "20px";
@@ -20,18 +21,23 @@ healthBar.style.transition = "width 0.2s";
 healthText.style.color = "white";
 healthText.style.font = "16px sans-serif";
 healthText.style.marginTop = "5px";
+healthText.style.display = "flex";
+healthText.style.alignItems = "center";
+healthText.style.gap = "14px";
+healthLabel.style.whiteSpace = "nowrap";
 
 healthContainer.appendChild(healthBar);
 healthContainer.appendChild(healthText);
+healthText.appendChild(healthLabel);
 document.body.appendChild(healthContainer);
 
 function updateHealthBar() {
 	const healthPercentage = (playerHealth / playerMaxHealth) * 100;
 	healthBar.style.width = `${healthPercentage}%`;
-	healthText.textContent = `Health: ${playerHealth}/${playerMaxHealth}`;
+	healthLabel.textContent = `Health: ${playerHealth}/${playerMaxHealth}`;
 
 	if (playerHealth <= 0) {
-		healthText.textContent = "Game over";
+		healthLabel.textContent = "Game over";
 	}
 }
 
