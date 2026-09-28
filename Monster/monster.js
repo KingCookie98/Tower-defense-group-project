@@ -70,3 +70,11 @@ function draw() {
 function drawMonster() {
   monster.drawMonster();
 }
+
+class BossMonster extends Monster {
+  constructor() {
+    super();
+    this.maxHealth = 15;
+    this.health = this.maxHealth;
+  }
+}
