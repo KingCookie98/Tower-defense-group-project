@@ -108,7 +108,9 @@ class WaveSpawner {
 				const isBoss = hasBoss;
 				const MonsterType = isBoss ? BossMonster : Monster;
 				const monster = new MonsterType(this.spawnX, this.spawnY, this.path);
-				const health = isBoss ? 10 + (waveNumber - 5) : 5;
+				const health = isBoss
+					? 20 + 3 * waveNumber
+					: 4 + 5 * Math.floor((waveNumber - 1) / 5);
 				monster.maxHealth = health;
 				monster.health = health;
 				monsters.push(monster);
