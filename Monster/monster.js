@@ -64,6 +64,8 @@ function setup() {
 
 function draw() {
   drawMap();
+  updateTowers([monster]);
+  drawTowers();
   monster.draw();
 }
 
