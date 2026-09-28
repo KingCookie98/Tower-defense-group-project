@@ -1,7 +1,10 @@
 class Monster {
-  constructor(x = 300, y = 240) {
+  constructor(x = 300, y = 240, path = []) {
     this.x = x;
     this.y = y;
+    this.path = path;
+    this.pathIndex = 1;
+    this.speed = 75;
     this.radius = 25;
     this.maxHealth = 5;
     this.health = 5;
@@ -14,6 +17,7 @@ class Monster {
       return;
     }
 
+    this.move(deltaTime / 1000);
     this.attackCooldown = max(0, this.attackCooldown - 1 / 60);
     this.hitFlash = max(0, this.hitFlash - 1);
 
@@ -28,6 +32,28 @@ class Monster {
     }
 
     this.drawMonster();
+  }
+
+  move(deltaSeconds) {
+    let distanceToMove = this.speed * deltaSeconds;
+
+    while (distanceToMove > 0 && this.pathIndex < this.path.length) {
+      const target = this.path[this.pathIndex];
+      const deltaX = target.x - this.x;
+      const deltaY = target.y - this.y;
+      const distanceToTarget = Math.hypot(deltaX, deltaY);
+
+      if (distanceToTarget <= distanceToMove) {
+        this.x = target.x;
+        this.y = target.y;
+        distanceToMove -= distanceToTarget;
+        this.pathIndex++;
+      } else {
+        this.x += deltaX / distanceToTarget * distanceToMove;
+        this.y += deltaY / distanceToTarget * distanceToMove;
+        distanceToMove = 0;
+      }
+    }
   }
 
   drawMonster() {
@@ -76,8 +102,8 @@ function draw() {
 }
 
 class BossMonster extends Monster {
-  constructor(x, y) {
-    super(x, y);
+  constructor(x, y, path) {
+    super(x, y, path);
     this.maxHealth = 15;
     this.health = this.maxHealth;
   }
