@@ -205,6 +205,7 @@ if (towerPlacementEnabled) {
 		const towerIndex = placedTowers.indexOf(selectedTower);
 		if (towerIndex !== -1) {
 			placedTowers.splice(towerIndex, 1);
+			addMoney(TOWER_SELL_REFUND);
 		}
 		selectedTower = null;
 		sellTowerButton.style.display = "none";
