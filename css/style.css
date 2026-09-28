@@ -8,22 +8,39 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    gap: 12px;
     min-height: 100vh;
     padding: 24px;
     background: #080d15;
 }
 
+#game-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: min(650px, calc(100vw - 48px));
+}
+
+#wave-counter {
+    display: grid;
+    place-items: center;
+    width: 20%;
+    height: 34px;
+    color: #fff;
+    background: #142314;
+    border: 1px solid #527552;
+    border-radius: 4px;
+    font: 600 15px sans-serif;
+}
+
 canvas {
     display: block;
-    width: min(650px, calc(100vw - 48px)) !important;
+    width: 100% !important;
     height: auto !important;
     border: 1px solid #2d4c5e;
     border-radius: 12px;
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
 }
 
-#game {
-    display: grid;
-    grid-template-columns: repeat(10, 65px);
-    gap: 2px;
-}

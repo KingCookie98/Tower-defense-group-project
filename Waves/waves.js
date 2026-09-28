@@ -6,11 +6,6 @@ class WaveSpawner {
 		this.spawnX = startColumn * TILE_SIZE + TILE_SIZE / 2;
 		this.spawnY = startRow * TILE_SIZE + TILE_SIZE / 2;
 		this.path = this.buildPath(startRow, startColumn);
-		this.waves = [
-			{ count: 3, health: 5 },
-			{ count: 5, health: 7 },
-			{ count: 1, health: 15, boss: true },
-		];
 		this.waveIndex = 0;
 		this.spawnedInWave = 0;
 		this.timer = 3;
@@ -62,8 +57,12 @@ class WaveSpawner {
 		}
 	}
 
+	updateWaveCounter() {
+		document.getElementById("wave-counter").textContent = `WAVE ${this.waveIndex + 1}`;
+	}
+
 	drawStartButton() {
-		if (!this.waitingForStart || this.waveIndex >= this.waves.length) {
+		if (!this.waitingForStart) {
 			return;
 		}
 
@@ -82,7 +81,7 @@ class WaveSpawner {
 	}
 
 	startWaveAt(x, y) {
-		if (!this.waitingForStart || this.waveIndex >= this.waves.length ||
+		if (!this.waitingForStart ||
 			Math.abs(x - this.spawnX) > this.buttonWidth / 2 ||
 			Math.abs(y - this.spawnY) > this.buttonHeight / 2) {
 			return false;
@@ -94,19 +93,24 @@ class WaveSpawner {
 	}
 
 	update(monsters) {
-		if (this.waitingForStart || this.waveIndex >= this.waves.length) {
+		if (this.waitingForStart) {
 			return;
 		}
 
 		this.timer -= deltaTime / 1000;
-		const wave = this.waves[this.waveIndex];
+		const waveNumber = this.waveIndex + 1;
+		const regularMonsterCount = waveNumber + 1;
+		const hasBoss = waveNumber % 5 === 0;
+		const totalMonsterCount = hasBoss ? 1 : regularMonsterCount;
 
-		if (this.spawnedInWave < wave.count) {
+		if (this.spawnedInWave < totalMonsterCount) {
 			if (this.timer <= 0) {
-				const MonsterType = wave.boss ? BossMonster : Monster;
+				const isBoss = hasBoss;
+				const MonsterType = isBoss ? BossMonster : Monster;
 				const monster = new MonsterType(this.spawnX, this.spawnY, this.path);
-				monster.maxHealth = wave.health;
-				monster.health = wave.health;
+				const health = isBoss ? 15 + (waveNumber - 5) * 2 : 5 + (waveNumber - 1) * 2;
+				monster.maxHealth = health;
+				monster.health = health;
 				monsters.push(monster);
 				this.spawnedInWave++;
 				this.timer = 0.8;
@@ -117,7 +121,7 @@ class WaveSpawner {
 		if (monsters.length === 0) {
 			this.waveIndex++;
 			this.spawnedInWave = 0;
-			this.waitingForStart = this.waveIndex < this.waves.length;
+			this.waitingForStart = true;
 		}
 	}
 }

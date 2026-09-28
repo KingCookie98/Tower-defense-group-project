@@ -103,7 +103,8 @@ let monsters = [];
 let waveSpawner;
 
 function setup() {
-  createCanvas(map[0].length * TILE_SIZE, map.length * TILE_SIZE);
+  const canvas = createCanvas(map[0].length * TILE_SIZE, map.length * TILE_SIZE);
+  canvas.parent("game-board");
   waveSpawner = new WaveSpawner();
 }
 
@@ -112,6 +113,7 @@ function draw() {
   waveSpawner.drawStartButton();
   monsters = monsters.filter(currentMonster => currentMonster.health > 0);
   waveSpawner.update(monsters);
+  waveSpawner.updateWaveCounter();
   updateTowers(monsters);
   drawTowers();
   for (const currentMonster of monsters) {
