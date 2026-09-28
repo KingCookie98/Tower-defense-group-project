@@ -4,17 +4,14 @@ const MONSTER_REWARD = 3;
 let playerMoney = 10;
 
 const moneyDisplay = document.createElement("div");
-moneyDisplay.style.position = "fixed";
-moneyDisplay.style.top = "20px";
-moneyDisplay.style.right = "20px";
-moneyDisplay.style.zIndex = "2";
-moneyDisplay.style.padding = "8px 12px";
-moneyDisplay.style.color = "white";
-moneyDisplay.style.background = "#193247";
-moneyDisplay.style.border = "1px solid #77bce8";
-moneyDisplay.style.borderRadius = "6px";
 moneyDisplay.style.font = "16px sans-serif";
-document.body.appendChild(moneyDisplay);
+moneyDisplay.style.color = "white";
+moneyDisplay.style.whiteSpace = "nowrap";
+if (typeof healthText !== "undefined") {
+	healthText.appendChild(moneyDisplay);
+} else {
+	document.body.appendChild(moneyDisplay);
+}
 
 function updateMoneyDisplay() {
 	moneyDisplay.textContent = `Penge: ${playerMoney} kr.`;
