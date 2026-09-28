@@ -1,6 +1,7 @@
 class Skud {
 	constructor(x, y, target) {
 		this.x = x;
+		this.damage = 1;
 		this.y = y;
 		this.target = target;
 		this.speed = 4;
