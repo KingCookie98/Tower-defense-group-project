@@ -31,19 +31,24 @@ class Tower {
 		return new Skud(this.x, this.y, target);
 	}
 
-	draw() {
+	draw(showRange = true) {
+		if (showRange) {
+			noFill();
+			stroke(100, 180, 255, 170);
+			strokeWeight(2);
+			circle(this.x, this.y, this.range * 2);
+		}
+
 		fill(90, 180, 255);
 		stroke(0);
+		strokeWeight(1);
 		circle(this.x, this.y, 30);
-
-		noFill();
-		stroke(100, 180, 255, 120);
-		circle(this.x, this.y, this.range * 2);
 	}
 }
 
 const placedTowers = [];
 const towerShots = [];
+let selectedTower = null;
 let towerDragActive = false;
 let towerPlacementTile = null;
 const towerPlacementEnabled = typeof map !== "undefined" && typeof TILE_SIZE !== "undefined";
@@ -75,6 +80,43 @@ towerInventoryItem.style.borderRadius = "6px";
 towerInventoryItem.style.cursor = "grab";
 towerInventoryItem.style.font = "inherit";
 
+const towerDragPreview = document.createElement("div");
+towerDragPreview.style.position = "fixed";
+towerDragPreview.style.zIndex = "3";
+towerDragPreview.style.width = "30px";
+towerDragPreview.style.height = "30px";
+towerDragPreview.style.border = "2px solid black";
+towerDragPreview.style.borderRadius = "50%";
+towerDragPreview.style.background = "rgba(90, 180, 255, 0.8)";
+towerDragPreview.style.pointerEvents = "none";
+towerDragPreview.style.transform = "translate(-50%, -50%)";
+towerDragPreview.style.display = "none";
+
+const towerRangePreview = document.createElement("div");
+towerRangePreview.style.position = "fixed";
+towerRangePreview.style.zIndex = "3";
+towerRangePreview.style.border = "2px solid rgba(100, 180, 255, 0.85)";
+towerRangePreview.style.borderRadius = "50%";
+towerRangePreview.style.pointerEvents = "none";
+towerRangePreview.style.transform = "translate(-50%, -50%)";
+towerRangePreview.style.display = "none";
+
+const sellTowerButton = document.createElement("button");
+sellTowerButton.type = "button";
+sellTowerButton.textContent = "Sell";
+sellTowerButton.style.position = "fixed";
+sellTowerButton.style.top = "138px";
+sellTowerButton.style.left = "20px";
+sellTowerButton.style.zIndex = "4";
+sellTowerButton.style.padding = "8px 12px";
+sellTowerButton.style.color = "white";
+sellTowerButton.style.background = "#7b2929";
+sellTowerButton.style.border = "1px solid #e88787";
+sellTowerButton.style.borderRadius = "6px";
+sellTowerButton.style.cursor = "pointer";
+sellTowerButton.style.font = "14px sans-serif";
+sellTowerButton.style.display = "none";
+
 const towerInventoryIcon = document.createElement("span");
 towerInventoryIcon.textContent = "●";
 towerInventoryIcon.style.color = "#5ab4ff";
@@ -83,21 +125,34 @@ towerInventoryItem.append(towerInventoryIcon, document.createTextNode("Tårn"));
 towerInventory.append(towerInventoryLabel, towerInventoryItem);
 if (towerPlacementEnabled) {
 	document.body.appendChild(towerInventory);
+	document.body.appendChild(towerDragPreview);
+	document.body.appendChild(towerRangePreview);
+	document.body.appendChild(sellTowerButton);
 }
 
-function getTowerTileAt(clientX, clientY) {
+function getCanvasPosition(clientX, clientY) {
 	const canvas = document.querySelector("canvas");
 	if (!canvas || !width || !height) {
 		return null;
 	}
 
 	const bounds = canvas.getBoundingClientRect();
-	const canvasX = (clientX - bounds.left) * width / bounds.width;
-	const canvasY = (clientY - bounds.top) * height / bounds.height;
-	const column = Math.floor(canvasX / TILE_SIZE);
-	const row = Math.floor(canvasY / TILE_SIZE);
+	return {
+		x: (clientX - bounds.left) * width / bounds.width,
+		y: (clientY - bounds.top) * height / bounds.height,
+	};
+}
 
-	if (canvasX < 0 || canvasY < 0 || row >= map.length || column >= map[0].length) {
+function getTowerTileAt(clientX, clientY) {
+	const position = getCanvasPosition(clientX, clientY);
+	if (!position) {
+		return null;
+	}
+
+	const column = Math.floor(position.x / TILE_SIZE);
+	const row = Math.floor(position.y / TILE_SIZE);
+
+	if (position.x < 0 || position.y < 0 || row >= map.length || column >= map[0].length) {
 		return null;
 	}
 
@@ -119,12 +174,39 @@ if (towerPlacementEnabled) {
 		towerDragActive = true;
 		towerInventoryItem.style.cursor = "grabbing";
 		towerPlacementTile = getTowerTileAt(event.clientX, event.clientY);
+		updateTowerDragPreview(event, towerPlacementTile);
 	});
 
 	window.addEventListener("pointermove", event => {
 		if (towerDragActive) {
 			towerPlacementTile = getTowerTileAt(event.clientX, event.clientY);
+			updateTowerDragPreview(event, towerPlacementTile);
 		}
+	});
+
+	window.addEventListener("pointerdown", event => {
+		if (event.target !== document.querySelector("canvas")) {
+			return;
+		}
+
+		const position = getCanvasPosition(event.clientX, event.clientY);
+		selectedTower = position && placedTowers.find(tower =>
+			dist(position.x, position.y, tower.x, tower.y) <= 20
+		) || null;
+		sellTowerButton.style.display = selectedTower ? "block" : "none";
+	});
+
+	sellTowerButton.addEventListener("click", () => {
+		if (!selectedTower) {
+			return;
+		}
+
+		const towerIndex = placedTowers.indexOf(selectedTower);
+		if (towerIndex !== -1) {
+			placedTowers.splice(towerIndex, 1);
+		}
+		selectedTower = null;
+		sellTowerButton.style.display = "none";
 	});
 
 	window.addEventListener("pointerup", event => {
@@ -142,19 +224,43 @@ if (towerPlacementEnabled) {
 
 		towerDragActive = false;
 		towerPlacementTile = null;
+		towerDragPreview.style.display = "none";
+		towerRangePreview.style.display = "none";
 		towerInventoryItem.style.cursor = "grab";
 	});
 
 	window.addEventListener("pointercancel", () => {
 		towerDragActive = false;
 		towerPlacementTile = null;
+		towerDragPreview.style.display = "none";
+		towerRangePreview.style.display = "none";
 		towerInventoryItem.style.cursor = "grab";
 	});
 }
 
+function updateTowerDragPreview(event, tile) {
+	const canvas = document.querySelector("canvas");
+	const scale = canvas && width ? canvas.getBoundingClientRect().width / width : 1;
+	towerRangePreview.style.width = `${160 * 2 * scale}px`;
+	towerRangePreview.style.height = `${160 * 2 * scale}px`;
+	towerRangePreview.style.left = `${event.clientX}px`;
+	towerRangePreview.style.top = `${event.clientY}px`;
+
+	if (tile) {
+		towerDragPreview.style.display = "none";
+		towerRangePreview.style.display = "none";
+		return;
+	}
+
+	towerRangePreview.style.display = "block";
+	towerDragPreview.style.left = `${event.clientX}px`;
+	towerDragPreview.style.top = `${event.clientY}px`;
+	towerDragPreview.style.display = "block";
+}
+
 function drawTowers() {
 	for (const tower of placedTowers) {
-		tower.draw();
+		tower.draw(tower === selectedTower);
 	}
 
 	if (towerDragActive && towerPlacementTile) {
@@ -163,6 +269,10 @@ function drawTowers() {
 		const centerX = column * TILE_SIZE + TILE_SIZE / 2;
 		const centerY = row * TILE_SIZE + TILE_SIZE / 2;
 
+		noFill();
+		stroke(100, 180, 255, 170);
+		strokeWeight(2);
+		circle(centerX, centerY, 160 * 2);
 		noStroke();
 		fill(valid ? color(40, 220, 90, 90) : color(240, 50, 50, 90));
 		rect(column * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
