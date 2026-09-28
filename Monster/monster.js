@@ -36,9 +36,9 @@ class Monster {
     }
 
     if (this.hitFlash > 0) {
-      fill(50, 90, 50);
+      fill(50, 90, 50); // RGB Color for the monster when hit
     } else {
-      fill(120, 210, 120);
+      fill(120, 210, 120); // RGB Color for the monster when its not getting hit
     }
 
     stroke(0);
