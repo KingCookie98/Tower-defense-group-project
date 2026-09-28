@@ -10,7 +10,7 @@ class Skud {
 	}
 
 	update() {
-		if (!this.target) {
+		if (!this.target || this.target.health <= 0) {
 			this.finished = true;
 			return;
 		}
@@ -20,7 +20,11 @@ class Skud {
 		this.y += sin(angle) * this.speed;
 
 		if (dist(this.x, this.y, this.target.x, this.target.y) < this.radius + this.target.radius) {
-			this.target.health--;
+			if (typeof this.target.takeDamage === "function") {
+				this.target.takeDamage(this.damage);
+			} else {
+				this.target.health -= this.damage;
+			}
 			this.finished = true;
 		}
 	}

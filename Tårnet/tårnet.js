@@ -68,7 +68,7 @@ towerInventoryLabel.style.marginBottom = "6px";
 
 const towerInventoryItem = document.createElement("button");
 towerInventoryItem.type = "button";
-towerInventoryItem.setAttribute("aria-label", "Træk et tårn til en græs-tile");
+towerInventoryItem.setAttribute("aria-label", `Køb et tårn for ${TOWER_COST} kroner`);
 towerInventoryItem.style.display = "flex";
 towerInventoryItem.style.alignItems = "center";
 towerInventoryItem.style.gap = "8px";
@@ -121,7 +121,7 @@ const towerInventoryIcon = document.createElement("span");
 towerInventoryIcon.textContent = "●";
 towerInventoryIcon.style.color = "#5ab4ff";
 towerInventoryIcon.style.fontSize = "22px";
-towerInventoryItem.append(towerInventoryIcon, document.createTextNode("Tårn"));
+towerInventoryItem.append(towerInventoryIcon, document.createTextNode(`Tårn - ${TOWER_COST} kr.`));
 towerInventory.append(towerInventoryLabel, towerInventoryItem);
 if (towerPlacementEnabled) {
 	document.body.appendChild(towerInventory);
@@ -161,6 +161,7 @@ function getTowerTileAt(clientX, clientY) {
 
 function canPlaceTower(tile) {
 	return tile !== null &&
+		canAffordTower() &&
 		map[tile.row][tile.column] === TILE.GRASS &&
 		!placedTowers.some(tower =>
 			Math.floor(tower.x / TILE_SIZE) === tile.column &&
@@ -215,7 +216,7 @@ if (towerPlacementEnabled) {
 		}
 
 		const tile = getTowerTileAt(event.clientX, event.clientY);
-		if (canPlaceTower(tile)) {
+		if (canPlaceTower(tile) && spendMoney(TOWER_COST)) {
 			placedTowers.push(new Tower(
 				tile.column * TILE_SIZE + TILE_SIZE / 2,
 				tile.row * TILE_SIZE + TILE_SIZE / 2

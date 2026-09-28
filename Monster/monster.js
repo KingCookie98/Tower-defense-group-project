@@ -5,8 +5,23 @@ class Monster {
     this.radius = 25;
     this.maxHealth = 5;
     this.health = 5;
+    this.rewarded = false;
     this.hitFlash = 0;
     this.attackCooldown = 0;
+  }
+
+  takeDamage(amount) {
+    if (this.health <= 0) {
+      return;
+    }
+
+    this.health = max(0, this.health - amount);
+    this.hitFlash = 8;
+
+    if (this.health === 0 && !this.rewarded) {
+      this.rewarded = true;
+      addMoney(MONSTER_REWARD);
+    }
   }
 
   draw() {
@@ -20,8 +35,7 @@ class Monster {
     if (mouseIsPressed) {
       if (dist(mouseX, mouseY, this.x, this.y) < this.radius) {
         if (this.attackCooldown <= 0) {
-          this.health = max(0, this.health - 1);
-          this.hitFlash = 8;
+          this.takeDamage(1);
           this.attackCooldown = 0.1;
         }
       }
