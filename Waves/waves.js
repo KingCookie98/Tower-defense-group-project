@@ -14,6 +14,9 @@ class WaveSpawner {
 		this.waveIndex = 0;
 		this.spawnedInWave = 0;
 		this.timer = 3;
+		this.waitingForStart = true;
+		this.buttonWidth = 61;
+		this.buttonHeight = 55;
 	}
 
 	buildPath(startRow, startColumn) {
@@ -59,8 +62,39 @@ class WaveSpawner {
 		}
 	}
 
+	drawStartButton() {
+		if (!this.waitingForStart || this.waveIndex >= this.waves.length) {
+			return;
+		}
+
+		push();
+		rectMode(CENTER);
+		fill(25, 100, 35);
+		stroke(255);
+		strokeWeight(2);
+		rect(this.spawnX, this.spawnY, this.buttonWidth, this.buttonHeight, 6);
+		noStroke();
+		fill(255);
+		textAlign(CENTER, CENTER);
+		textSize(9);
+		text(this.waveIndex === 0 ? "START WAVE 1" : "NEXT WAVE?", this.spawnX, this.spawnY);
+		pop();
+	}
+
+	startWaveAt(x, y) {
+		if (!this.waitingForStart || this.waveIndex >= this.waves.length ||
+			Math.abs(x - this.spawnX) > this.buttonWidth / 2 ||
+			Math.abs(y - this.spawnY) > this.buttonHeight / 2) {
+			return false;
+		}
+
+		this.waitingForStart = false;
+		this.timer = 0;
+		return true;
+	}
+
 	update(monsters) {
-		if (this.waveIndex >= this.waves.length) {
+		if (this.waitingForStart || this.waveIndex >= this.waves.length) {
 			return;
 		}
 
@@ -83,7 +117,7 @@ class WaveSpawner {
 		if (monsters.length === 0) {
 			this.waveIndex++;
 			this.spawnedInWave = 0;
-			this.timer = 3;
+			this.waitingForStart = this.waveIndex < this.waves.length;
 		}
 	}
 }
