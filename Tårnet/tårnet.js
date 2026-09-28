@@ -1,5 +1,4 @@
-const MAX_TOWER_UPGRADES = 4;
-const TOWER_UPGRADE_REFUND = 3;
+const MAX_TOWER_UPGRADES = 5;
 
 class Tower {
 	constructor(x, y) {
@@ -75,7 +74,7 @@ class Tower {
 			return false;
 		}
 
-		this.fireRateMultiplier *= 1.25;
+		this.fireRateMultiplier *= 1.2;
 		this.upgradeCount++;
 		return true;
 	}
@@ -152,7 +151,7 @@ towerRangePreview.style.display = "none";
 
 const sellTowerButton = document.createElement("button");
 sellTowerButton.type = "button";
-sellTowerButton.textContent = "Sell";
+sellTowerButton.textContent = `Sell\n+${TOWER_SELL_REFUND} kr.`;
 sellTowerButton.style.padding = "8px 12px";
 sellTowerButton.style.color = "white";
 sellTowerButton.style.background = "#7b2929";
@@ -160,11 +159,11 @@ sellTowerButton.style.border = "1px solid #e88787";
 sellTowerButton.style.borderRadius = "6px";
 sellTowerButton.style.cursor = "pointer";
 sellTowerButton.style.font = "14px sans-serif";
-sellTowerButton.style.whiteSpace = "nowrap";
+sellTowerButton.style.whiteSpace = "pre-line";
 
 const upgradeTowerButton = document.createElement("button");
 upgradeTowerButton.type = "button";
-upgradeTowerButton.textContent = `25% skydehastighed - ${TOWER_UPGRADE_COST} kr.`;
+upgradeTowerButton.textContent = "+20% Skydehastighed\n-5 kr.";
 upgradeTowerButton.style.padding = "8px 12px";
 upgradeTowerButton.style.color = "white";
 upgradeTowerButton.style.background = "#245b38";
@@ -172,7 +171,7 @@ upgradeTowerButton.style.border = "1px solid #80ce98";
 upgradeTowerButton.style.borderRadius = "6px";
 upgradeTowerButton.style.cursor = "pointer";
 upgradeTowerButton.style.font = "14px sans-serif";
-upgradeTowerButton.style.whiteSpace = "nowrap";
+upgradeTowerButton.style.whiteSpace = "pre-line";
 
 const towerActions = document.createElement("div");
 towerActions.style.position = "fixed";
@@ -270,7 +269,6 @@ if (towerPlacementEnabled) {
 			selectedTower.upgradeCount < MAX_TOWER_UPGRADES &&
 			spendMoney(TOWER_UPGRADE_COST) &&
 			selectedTower.upgradeFireRate()) {
-			addMoney(TOWER_UPGRADE_REFUND);
 			updateTowerUpgradeButton();
 		}
 	});
