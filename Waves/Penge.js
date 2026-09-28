@@ -1,5 +1,6 @@
 const TOWER_COST = 10;
 const TOWER_SELL_REFUND = 7;
+const TOWER_UPGRADE_COST = 5;
 const MONSTER_REWARD = 3;
 let playerMoney = 10;
 

@@ -4,6 +4,7 @@ class Tower {
 		this.y = y;
 		this.range = 160;
 		this.cooldown = 0;
+		this.fireRateMultiplier = 1;
 	}
 
 	update(enemies) {
@@ -13,7 +14,7 @@ class Tower {
 			const target = this.findTarget(enemies);
 
 			if (target) {
-				this.cooldown = 1;
+				this.cooldown = 1 / this.fireRateMultiplier;
 				return this.shoot(target);
 			}
 		}
@@ -29,6 +30,10 @@ class Tower {
 
 	shoot(target) {
 		return new Skud(this.x, this.y, target);
+	}
+
+	upgradeFireRate() {
+		this.fireRateMultiplier *= 1.1;
 	}
 
 	draw(showRange = true) {
@@ -104,10 +109,6 @@ towerRangePreview.style.display = "none";
 const sellTowerButton = document.createElement("button");
 sellTowerButton.type = "button";
 sellTowerButton.textContent = "Sell";
-sellTowerButton.style.position = "fixed";
-sellTowerButton.style.top = "138px";
-sellTowerButton.style.left = "20px";
-sellTowerButton.style.zIndex = "4";
 sellTowerButton.style.padding = "8px 12px";
 sellTowerButton.style.color = "white";
 sellTowerButton.style.background = "#7b2929";
@@ -115,7 +116,39 @@ sellTowerButton.style.border = "1px solid #e88787";
 sellTowerButton.style.borderRadius = "6px";
 sellTowerButton.style.cursor = "pointer";
 sellTowerButton.style.font = "14px sans-serif";
-sellTowerButton.style.display = "none";
+sellTowerButton.style.whiteSpace = "nowrap";
+
+const upgradeTowerButton = document.createElement("button");
+upgradeTowerButton.type = "button";
+upgradeTowerButton.textContent = "10% hurtigere skydning";
+upgradeTowerButton.style.padding = "8px 12px";
+upgradeTowerButton.style.color = "white";
+upgradeTowerButton.style.background = "#245b38";
+upgradeTowerButton.style.border = "1px solid #80ce98";
+upgradeTowerButton.style.borderRadius = "6px";
+upgradeTowerButton.style.cursor = "pointer";
+upgradeTowerButton.style.font = "14px sans-serif";
+upgradeTowerButton.style.whiteSpace = "nowrap";
+
+const towerUpgradePrice = document.createElement("span");
+towerUpgradePrice.textContent = `${TOWER_UPGRADE_COST} kr.`;
+towerUpgradePrice.style.padding = "7px 9px";
+towerUpgradePrice.style.color = "white";
+towerUpgradePrice.style.background = "#193247";
+towerUpgradePrice.style.border = "1px solid #77bce8";
+towerUpgradePrice.style.borderRadius = "6px";
+towerUpgradePrice.style.font = "bold 14px sans-serif";
+towerUpgradePrice.style.whiteSpace = "nowrap";
+
+const towerActions = document.createElement("div");
+towerActions.style.position = "fixed";
+towerActions.style.top = "138px";
+towerActions.style.left = "20px";
+towerActions.style.zIndex = "4";
+towerActions.style.display = "none";
+towerActions.style.alignItems = "center";
+towerActions.style.gap = "8px";
+towerActions.append(sellTowerButton, upgradeTowerButton, towerUpgradePrice);
 
 const towerInventoryIcon = document.createElement("span");
 towerInventoryIcon.textContent = "●";
@@ -127,7 +160,7 @@ if (towerPlacementEnabled) {
 	document.body.appendChild(towerInventory);
 	document.body.appendChild(towerDragPreview);
 	document.body.appendChild(towerRangePreview);
-	document.body.appendChild(sellTowerButton);
+	document.body.appendChild(towerActions);
 }
 
 function getCanvasPosition(clientX, clientY) {
@@ -194,7 +227,15 @@ if (towerPlacementEnabled) {
 		selectedTower = position && placedTowers.find(tower =>
 			dist(position.x, position.y, tower.x, tower.y) <= 20
 		) || null;
-		sellTowerButton.style.display = selectedTower ? "block" : "none";
+		towerActions.style.display = selectedTower ? "flex" : "none";
+		updateTowerUpgradeButton();
+	});
+
+	upgradeTowerButton.addEventListener("click", () => {
+		if (selectedTower && spendMoney(TOWER_UPGRADE_COST)) {
+			selectedTower.upgradeFireRate();
+			updateTowerUpgradeButton();
+		}
 	});
 
 	sellTowerButton.addEventListener("click", () => {
@@ -208,7 +249,7 @@ if (towerPlacementEnabled) {
 			addMoney(TOWER_SELL_REFUND);
 		}
 		selectedTower = null;
-		sellTowerButton.style.display = "none";
+		towerActions.style.display = "none";
 	});
 
 	window.addEventListener("pointerup", event => {
@@ -285,6 +326,7 @@ function drawTowers() {
 }
 
 function updateTowers(enemies) {
+	updateTowerUpgradeButton();
 	for (const tower of placedTowers) {
 		const shot = tower.update(enemies);
 		if (shot) {
@@ -300,4 +342,10 @@ function updateTowers(enemies) {
 			towerShots.splice(i, 1);
 		}
 	}
+}
+
+function updateTowerUpgradeButton() {
+	upgradeTowerButton.disabled = !selectedTower || playerMoney < TOWER_UPGRADE_COST;
+	upgradeTowerButton.style.opacity = upgradeTowerButton.disabled ? "0.55" : "1";
+	upgradeTowerButton.style.cursor = upgradeTowerButton.disabled ? "not-allowed" : "pointer";
 }
