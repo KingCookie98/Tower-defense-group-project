@@ -1,3 +1,6 @@
+const MAX_TOWER_UPGRADES = 4;
+const TOWER_UPGRADE_REFUND = 3;
+
 class Tower {
 	constructor(x, y) {
 		this.x = x;
@@ -5,6 +8,7 @@ class Tower {
 		this.range = 160;
 		this.cooldown = 0;
 		this.fireRateMultiplier = 1;
+		this.upgradeCount = 0;
 	}
 
 	update(enemies) {
@@ -23,9 +27,43 @@ class Tower {
 	}
 
 	findTarget(enemies) {
-		return enemies.find(enemy =>
-			enemy.health > 0 && dist(this.x, this.y, enemy.x, enemy.y) <= this.range
+		return enemies.reduce((lowestHealthEnemy, enemy) => {
+			if (enemy.health <= 0 || dist(this.x, this.y, enemy.x, enemy.y) > this.range) {
+				return lowestHealthEnemy;
+			}
+
+			const hasLessHealth = !lowestHealthEnemy || enemy.health < lowestHealthEnemy.health;
+			const isFurtherAlong = lowestHealthEnemy &&
+				enemy.health === lowestHealthEnemy.health &&
+				this.getPathProgress(enemy) > this.getPathProgress(lowestHealthEnemy);
+			return hasLessHealth || isFurtherAlong
+				? enemy
+				: lowestHealthEnemy;
+		}, null);
+	}
+
+	getPathProgress(enemy) {
+		if (!Array.isArray(enemy.path) || enemy.path.length < 2) {
+			return enemy.pathIndex || 0;
+		}
+
+		const pathIndex = Number.isFinite(enemy.pathIndex) ? enemy.pathIndex : 1;
+		const nextIndex = Math.max(1, Math.min(pathIndex, enemy.path.length - 1));
+		const segmentStart = enemy.path[nextIndex - 1];
+		const segmentEnd = enemy.path[nextIndex];
+		const segmentLength = Math.hypot(
+			segmentEnd.x - segmentStart.x,
+			segmentEnd.y - segmentStart.y
 		);
+		const distanceTravelled = Math.hypot(
+			enemy.x - segmentStart.x,
+			enemy.y - segmentStart.y
+		);
+		const segmentProgress = segmentLength === 0
+			? 0
+			: Math.min(1, distanceTravelled / segmentLength);
+
+		return nextIndex - 1 + segmentProgress;
 	}
 
 	shoot(target) {
@@ -33,7 +71,13 @@ class Tower {
 	}
 
 	upgradeFireRate() {
-		this.fireRateMultiplier *= 1.1;
+		if (this.upgradeCount >= MAX_TOWER_UPGRADES) {
+			return false;
+		}
+
+		this.fireRateMultiplier *= 1.25;
+		this.upgradeCount++;
+		return true;
 	}
 
 	draw(showRange = true) {
@@ -120,7 +164,7 @@ sellTowerButton.style.whiteSpace = "nowrap";
 
 const upgradeTowerButton = document.createElement("button");
 upgradeTowerButton.type = "button";
-upgradeTowerButton.textContent = "10% hurtigere skydning";
+upgradeTowerButton.textContent = `25% hurtigere skydning - ${TOWER_UPGRADE_COST} kr.`;
 upgradeTowerButton.style.padding = "8px 12px";
 upgradeTowerButton.style.color = "white";
 upgradeTowerButton.style.background = "#245b38";
@@ -130,16 +174,6 @@ upgradeTowerButton.style.cursor = "pointer";
 upgradeTowerButton.style.font = "14px sans-serif";
 upgradeTowerButton.style.whiteSpace = "nowrap";
 
-const towerUpgradePrice = document.createElement("span");
-towerUpgradePrice.textContent = `${TOWER_UPGRADE_COST} kr.`;
-towerUpgradePrice.style.padding = "7px 9px";
-towerUpgradePrice.style.color = "white";
-towerUpgradePrice.style.background = "#193247";
-towerUpgradePrice.style.border = "1px solid #77bce8";
-towerUpgradePrice.style.borderRadius = "6px";
-towerUpgradePrice.style.font = "bold 14px sans-serif";
-towerUpgradePrice.style.whiteSpace = "nowrap";
-
 const towerActions = document.createElement("div");
 towerActions.style.position = "fixed";
 towerActions.style.top = "138px";
@@ -148,7 +182,7 @@ towerActions.style.zIndex = "4";
 towerActions.style.display = "none";
 towerActions.style.alignItems = "center";
 towerActions.style.gap = "8px";
-towerActions.append(sellTowerButton, upgradeTowerButton, towerUpgradePrice);
+towerActions.append(sellTowerButton, upgradeTowerButton);
 
 const towerInventoryIcon = document.createElement("span");
 towerInventoryIcon.textContent = "●";
@@ -232,8 +266,11 @@ if (towerPlacementEnabled) {
 	});
 
 	upgradeTowerButton.addEventListener("click", () => {
-		if (selectedTower && spendMoney(TOWER_UPGRADE_COST)) {
-			selectedTower.upgradeFireRate();
+		if (selectedTower &&
+			selectedTower.upgradeCount < MAX_TOWER_UPGRADES &&
+			spendMoney(TOWER_UPGRADE_COST) &&
+			selectedTower.upgradeFireRate()) {
+			addMoney(TOWER_UPGRADE_REFUND);
 			updateTowerUpgradeButton();
 		}
 	});
@@ -345,7 +382,9 @@ function updateTowers(enemies) {
 }
 
 function updateTowerUpgradeButton() {
-	upgradeTowerButton.disabled = !selectedTower || playerMoney < TOWER_UPGRADE_COST;
+	const canUpgrade = selectedTower && selectedTower.upgradeCount < MAX_TOWER_UPGRADES;
+	upgradeTowerButton.style.display = canUpgrade ? "block" : "none";
+	upgradeTowerButton.disabled = !canUpgrade || playerMoney < TOWER_UPGRADE_COST;
 	upgradeTowerButton.style.opacity = upgradeTowerButton.disabled ? "0.55" : "1";
 	upgradeTowerButton.style.cursor = upgradeTowerButton.disabled ? "not-allowed" : "pointer";
 }
