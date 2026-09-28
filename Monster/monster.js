@@ -9,7 +9,6 @@ class Monster {
     this.maxHealth = 5;
     this.health = 5;
     this.hitFlash = 0;
-    this.attackCooldown = 0;
   }
 
   draw() {
@@ -18,18 +17,7 @@ class Monster {
     }
 
     this.move(deltaTime / 1000);
-    this.attackCooldown = max(0, this.attackCooldown - 1 / 60);
     this.hitFlash = max(0, this.hitFlash - 1);
-
-    if (mouseIsPressed) {
-      if (dist(mouseX, mouseY, this.x, this.y) < this.radius) {
-        if (this.attackCooldown <= 0) {
-          this.health = max(0, this.health - 1);
-          this.hitFlash = 8;
-          this.attackCooldown = 0.1;
-        }
-      }
-    }
 
     this.drawMonster();
   }
