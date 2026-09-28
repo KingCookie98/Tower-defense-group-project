@@ -164,7 +164,7 @@ sellTowerButton.style.whiteSpace = "nowrap";
 
 const upgradeTowerButton = document.createElement("button");
 upgradeTowerButton.type = "button";
-upgradeTowerButton.textContent = `25% hurtigere skydning - ${TOWER_UPGRADE_COST} kr.`;
+upgradeTowerButton.textContent = `25% skydehastighed - ${TOWER_UPGRADE_COST} kr.`;
 upgradeTowerButton.style.padding = "8px 12px";
 upgradeTowerButton.style.color = "white";
 upgradeTowerButton.style.background = "#245b38";
