@@ -16,26 +16,37 @@ const TILE = {
     END: 3,
 };
 
+const TILE_SIZE = 65;
+const TILE_COLORS = {
+    [TILE.GRASS]: "#099309",
+    [TILE.PATH]: "#6a3006",
+    [TILE.START]: "#05fa05",
+    [TILE.END]: "#ff0000",
+};
+
+function drawMap() {
+    for (let y = 0; y < map.length; y++) {
+        for (let x = 0; x < map[y].length; x++) {
+            fill(TILE_COLORS[map[y][x]]);
+            stroke(0, 70);
+            rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        }
+    }
+}
+
 const game = document.getElementById("game");
 
-for (let y = 0; y < map.length; y++) {
-    for (let x = 0; x < map[y].length; x++) {
-        const tile = document.createElement("div");
+if (game) {
+    for (let y = 0; y < map.length; y++) {
+        for (let x = 0; x < map[y].length; x++) {
+            const tile = document.createElement("div");
 
-        tile.style.width = "65px";
-        tile.style.height = "65px";
+            tile.style.width = `${TILE_SIZE}px`;
+            tile.style.height = `${TILE_SIZE}px`;
+            tile.style.backgroundColor = TILE_COLORS[map[y][x]];
 
-        if (map[y][x] === 0) {
-            tile.style.backgroundColor = "#099309";
-        } else if (map[y][x] === 1) {
-            tile.style.backgroundColor = "#6a3006";
-        } else if (map[y][x] === 2) {
-            tile.style.backgroundColor = "#05fa0549";
-        } else if (map[y][x] === 3) {
-            tile.style.backgroundColor = "#ff00003e";
+            game.appendChild(tile);
         }
-
-        game.appendChild(tile);
     }
 }
 

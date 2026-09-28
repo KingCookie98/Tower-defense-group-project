@@ -59,11 +59,11 @@ class Monster {
 let monster = new Monster();
 
 function setup() {
-  createCanvas(800, 600);
+  createCanvas(map[0].length * TILE_SIZE, map.length * TILE_SIZE);
 }
 
 function draw() {
-  background(220);
+  drawMap();
   monster.draw();
 }
 
