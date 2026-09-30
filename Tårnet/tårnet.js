@@ -11,7 +11,7 @@ class Tower {
 	}
 
 	update(enemies) {
-		this.cooldown = max(0, this.cooldown - deltaTime / 1000);
+		this.cooldown = max(0, this.cooldown - deltaTime / 1000 * gameSpeed);
 
 		if (this.cooldown <= 0) {
 			const target = this.findTarget(enemies);

@@ -10,7 +10,14 @@
 </head>
 <body>
     <main id="game-board">
-        <div id="wave-counter">WAVE 1</div>
+        <div id="game-controls">
+            <div id="wave-counter">WAVE 1</div>
+            <div id="game-speed" role="group" aria-label="Game speed">
+                <button type="button" data-speed="1" aria-pressed="true">1x</button>
+                <button type="button" data-speed="2" aria-pressed="false">2x</button>
+                <button type="button" data-speed="3" aria-pressed="false">3x</button>
+            </div>
+        </div>
     </main>
     <script src="Map/Map.js"></script>
     <script src="player/player.js"></script>

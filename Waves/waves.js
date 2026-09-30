@@ -97,7 +97,7 @@ class WaveSpawner {
 			return;
 		}
 
-		this.timer -= deltaTime / 1000;
+		this.timer -= deltaTime / 1000 * gameSpeed;
 		const waveNumber = this.waveIndex + 1;
 		const regularMonsterCount = waveNumber + 1;
 		const hasBoss = waveNumber % 5 === 0;
