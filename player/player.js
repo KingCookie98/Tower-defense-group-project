@@ -1,3 +1,4 @@
+/** Spillerens base-helbred og brugerflade til helbredsvisning. */
 let playerHealth = 100;
 const playerMaxHealth = 100;
 
@@ -31,6 +32,7 @@ healthContainer.appendChild(healthText);
 healthText.appendChild(healthLabel);
 document.body.appendChild(healthContainer);
 
+/** Synkroniserer helbredsteksten og bredden på helbredsbaren med spillerens HP. */
 function updateHealthBar() {
 	const healthPercentage = (playerHealth / playerMaxHealth) * 100;
 	healthBar.style.width = `${healthPercentage}%`;
@@ -41,6 +43,10 @@ function updateHealthBar() {
 	}
 }
 
+/**
+ * Trækker helbred fra basen og åbner game-over-skærmen, hvis HP når nul.
+ * @param {number} amount Mængden af skade.
+ */
 function damagePlayer(amount) {
 	playerHealth = Math.max(0, playerHealth - amount);
 	updateHealthBar();
@@ -51,6 +57,7 @@ function damagePlayer(amount) {
 	}
 }
 
+/** Håndterer et monsters ankomst til slutstenen; bosser ødelægger basen straks. */
 function checkMonsterCollision(monsterRow, monsterColumn, isBoss = false) {
 	const monsterIsOnEndTile = map[monsterRow]?.[monsterColumn] === TILE.END;
 

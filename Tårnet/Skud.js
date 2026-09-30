@@ -1,4 +1,6 @@
+/** Et projektil, der følger sit mål og giver skade ved træf. */
 class Skud {
+	/** Opretter et projektil rettet mod et bestemt monster. */
 	constructor(x, y, target) {
 		this.x = x;
 		this.damage = 1;
@@ -9,6 +11,7 @@ class Skud {
 		this.finished = false;
 	}
 
+	/** Flytter projektilet og afslutter det ved træf eller hvis målet dør. */
 	update() {
 		if (!this.target || this.target.health <= 0) {
 			this.finished = true;
@@ -34,6 +37,7 @@ class Skud {
 		}
 	}
 
+	/** Tegner projektilet på p5-canvas. */
 	draw() {
 		fill(255, 215, 0);
 		noStroke();

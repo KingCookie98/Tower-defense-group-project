@@ -1,8 +1,12 @@
+/**
+ * p5-sketch for slutskærmen. Resultat og antal gennemførte waves læses fra URL'en.
+ */
 let restartButton;
 let menuButton;
 let gameResult;
 let waveCount;
 
+/** Læser resultatet fra URL-parametre og placerer slutskærmens knapper. */
 function setup() {
 	createCanvas(800, 600);
 	textFont('Trebuchet MS');
@@ -25,16 +29,19 @@ function setup() {
 	waveCount = readWaveCount(parameters.get('waves'));
 }
 
+/** Konverterer wave-parameteren til et ikke-negativt heltal. */
 function readWaveCount(value) {
 	const count = Number.parseInt(value, 10);
 	return Number.isFinite(count) ? Math.max(0, count) : 0;
 }
 
+/** Tegner slutskærmens baggrund og indhold pr. frame. */
 function draw() {
 	drawBackground();
 	drawGameOverMenu();
 }
 
+/** Tegner slutskærmens gitterbaggrund. */
 function drawBackground() {
 	background('#101827');
 
@@ -54,6 +61,7 @@ function drawBackground() {
 	}
 }
 
+/** Viser resultat, wave-tal samt genstart- og menuvalg. */
 function drawGameOverMenu() {
 	textAlign(CENTER, CENTER);
 	noStroke();
@@ -84,6 +92,7 @@ function drawGameOverMenu() {
 	drawButton(menuButton, 'MAIN MENU', false);
 }
 
+/** Tegner en knap og dens hover-tilstand. */
 function drawButton(button, label, isPrimary) {
 	const isHovering = mouseX >= button.x && mouseX <= button.x + button.width
 		&& mouseY >= button.y && mouseY <= button.y + button.height;
@@ -106,6 +115,7 @@ function drawButton(button, label, isPrimary) {
 	text(label, button.x + button.width / 2, button.y + button.height / 2);
 }
 
+/** Håndterer musevalg: hovedmenuen eller en ny spilrunde. */
 function mousePressed() {
 	if (mouseX >= menuButton.x && mouseX <= menuButton.x + menuButton.width
 		&& mouseY >= menuButton.y && mouseY <= menuButton.y + menuButton.height) {
@@ -116,6 +126,7 @@ function mousePressed() {
 	window.location.href = '../Game.html';
 }
 
+/** Understøtter M for menu og mellemrum/Enter for at starte igen. */
 function keyPressed() {
 	if (key === 'm' || key === 'M') {
 		window.location.href = 'Start menu.html';

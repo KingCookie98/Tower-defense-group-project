@@ -1,5 +1,7 @@
+/** p5-sketch for startmenuen; PLAY sender spilleren til Game.html. */
 let playButton;
 
+/** Opretter startmenuens canvas og beregner PLAY-knappens placering. */
 function setup() {
     createCanvas(800, 600);
     textFont('Trebuchet MS');
@@ -11,11 +13,13 @@ function setup() {
     };
 }
 
+/** Tegner baggrund og menu én gang pr. p5-frame. */
 function draw() {
     drawBackground();
     drawStartMenu();
 }
 
+/** Tegner menuens gitterbaggrund og afdæmpede flader. */
 function drawBackground() {
     background('#101827');
 
@@ -35,6 +39,7 @@ function drawBackground() {
     }
 }
 
+/** Tegner titel, beskrivelse og PLAY-knap inklusive hover-tilstand. */
 function drawStartMenu() {
     textAlign(CENTER, CENTER);
     noStroke();
@@ -63,6 +68,7 @@ function drawStartMenu() {
     text('PLAY', width / 2, playButton.y + playButton.height / 2);
 }
 
+/** Navigerer til spillet, når PLAY-knappen trykkes. */
 function mousePressed() {
     if (mouseX >= playButton.x && mouseX <= playButton.x + playButton.width
         && mouseY >= playButton.y && mouseY <= playButton.y + playButton.height) {

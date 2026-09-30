@@ -1,6 +1,11 @@
+/**
+ * Tårnklasser og brugerflade til køb, placering, valg, opgradering og salg.
+ * Placering og rendering bruger de globale kort-, økonomi- og p5-funktioner.
+ */
 const MAX_TOWER_UPGRADES = 5;
 
 class Tower {
+	/** Opretter et tårn i canvas-koordinater med standardrækkevidde. */
 	constructor(x, y) {
 		this.x = x;
 		this.y = y;
@@ -10,6 +15,7 @@ class Tower {
 		this.upgradeCount = 0;
 	}
 
+	/** Opdaterer cooldown og returnerer et nyt skud, hvis et mål kan rammes. */
 	update(enemies) {
 		this.cooldown = max(0, this.cooldown - deltaTime / 1000 * gameSpeed);
 
@@ -25,6 +31,7 @@ class Tower {
 		return null;
 	}
 
+	/** Vælger et levende mål inden for rækkevidde med lavest HP. */
 	findTarget(enemies) {
 		return enemies.reduce((lowestHealthEnemy, enemy) => {
 			if (enemy.health <= 0 || dist(this.x, this.y, enemy.x, enemy.y) > this.range) {
@@ -41,6 +48,7 @@ class Tower {
 		}, null);
 	}
 
+	/** Beregner fjendens position relativt til rutens samlede forløb. */
 	getPathProgress(enemy) {
 		if (!Array.isArray(enemy.path) || enemy.path.length < 2) {
 			return enemy.pathIndex || 0;
@@ -65,10 +73,12 @@ class Tower {
 		return nextIndex - 1 + segmentProgress;
 	}
 
+	/** Opretter et skud fra tårnet mod det valgte mål. */
 	shoot(target) {
 		return new Skud(this.x, this.y, target);
 	}
 
+	/** Øger skudhastigheden med 20 %, op til MAX_TOWER_UPGRADES. */
 	upgradeFireRate() {
 		if (this.upgradeCount >= MAX_TOWER_UPGRADES) {
 			return false;
@@ -79,6 +89,7 @@ class Tower {
 		return true;
 	}
 
+	/** Tegner tårnet og eventuelt dets rækkeviddecirkel. */
 	draw(showRange = true) {
 		if (showRange) {
 			noFill();
@@ -196,6 +207,7 @@ if (towerPlacementEnabled) {
 	document.body.appendChild(towerActions);
 }
 
+/** Konverterer klientens skærmkoordinater til canvas-koordinater. */
 function getCanvasPosition(clientX, clientY) {
 	const canvas = document.querySelector("canvas");
 	if (!canvas || !width || !height) {
@@ -209,6 +221,7 @@ function getCanvasPosition(clientX, clientY) {
 	};
 }
 
+/** Finder feltet under skærmkoordinaterne, eller null uden for canvas. */
 function getTowerTileAt(clientX, clientY) {
 	const position = getCanvasPosition(clientX, clientY);
 	if (!position) {
@@ -225,6 +238,7 @@ function getTowerTileAt(clientX, clientY) {
 	return { row, column };
 }
 
+/** Kontrollerer felt, saldo og overlap før et tårn kan placeres. */
 function canPlaceTower(tile) {
 	return tile !== null &&
 		canAffordTower() &&
@@ -316,6 +330,7 @@ if (towerPlacementEnabled) {
 	});
 }
 
+/** Opdaterer placering og synlighed af træk-preview under musebevægelse. */
 function updateTowerDragPreview(event, tile) {
 	const canvas = document.querySelector("canvas");
 	const scale = canvas && width ? canvas.getBoundingClientRect().width / width : 1;
@@ -336,6 +351,7 @@ function updateTowerDragPreview(event, tile) {
 	towerDragPreview.style.display = "block";
 }
 
+/** Tegner placerede tårne og feedback for det aktuelle placeringsfelt. */
 function drawTowers() {
 	for (const tower of placedTowers) {
 		tower.draw(tower === selectedTower);
@@ -360,6 +376,7 @@ function drawTowers() {
 	}
 }
 
+/** Opdaterer tårnenes mål/skud og fjerner afsluttede projektiler. */
 function updateTowers(enemies) {
 	updateTowerUpgradeButton();
 	for (const tower of placedTowers) {
@@ -379,6 +396,7 @@ function updateTowers(enemies) {
 	}
 }
 
+/** Synkroniserer opgraderingsknappens teksttilstand med valgt tårn og saldo. */
 function updateTowerUpgradeButton() {
 	const canUpgrade = selectedTower && selectedTower.upgradeCount < MAX_TOWER_UPGRADES;
 	upgradeTowerButton.style.display = canUpgrade ? "block" : "none";

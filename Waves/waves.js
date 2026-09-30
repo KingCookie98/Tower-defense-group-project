@@ -1,4 +1,9 @@
+/**
+ * Styrer wave-start, monster-spawns, ruteopbygning og wave-tælleren.
+ * Forudsætter at map, TILE, Monster og BossMonster er indlæst først.
+ */
 class WaveSpawner {
+	/** Finder spawnfeltet og forbereder wave-tilstanden. */
 	constructor() {
 		const startRow = map.findIndex(row => row.includes(TILE.START));
 		const startColumn = map[startRow].indexOf(TILE.START);
@@ -15,6 +20,13 @@ class WaveSpawner {
 		this.buttonHeight = 55;
 	}
 
+	/**
+	 * Bygger en ordnet liste af midtpunkter fra startfeltet til slutstenen.
+	 * @param {number} startRow Rækken med startfeltet.
+	 * @param {number} startColumn Kolonnen med startfeltet.
+	 * @returns {{x: number, y: number}[]} Monsterets rute i canvas-koordinater.
+	 * @throws {Error} Hvis kortets sti ikke forbinder start og slut.
+	 */
 	buildPath(startRow, startColumn) {
 		const path = [];
 		const visited = new Set();
@@ -58,10 +70,12 @@ class WaveSpawner {
 		}
 	}
 
+	/** Opdaterer HTML-elementet, der viser det aktuelle wave-nummer. */
 	updateWaveCounter() {
 		document.getElementById("wave-counter").textContent = `WAVE ${this.waveIndex + 1}`;
 	}
 
+	/** Tegner den klikbare startflade, når spawneren venter på næste wave. */
 	drawStartButton() {
 		if (!this.waitingForStart) {
 			return;
@@ -81,6 +95,7 @@ class WaveSpawner {
 		pop();
 	}
 
+	/** Starter en ventende wave, hvis canvas-klikket rammer startfladen. */
 	startWaveAt(x, y) {
 		if (!this.waitingForStart ||
 			Math.abs(x - this.spawnX) > this.buttonWidth / 2 ||
@@ -93,6 +108,12 @@ class WaveSpawner {
 		return true;
 	}
 
+	/**
+	 * Opdaterer spawn-timeren. Hver femte wave består af en boss; øvrige waves
+	 * indeholder et stigende antal normale monstre. Næste wave venter på, at
+	 * hele monsterlisten er tom, også når listen indeholder en boss.
+	 * @param {Monster[]} monsters Aktive monstre, som spawneren kan tilføje til.
+	 */
 	update(monsters) {
 		if (this.waitingForStart) {
 			if (!this.autoWave) {

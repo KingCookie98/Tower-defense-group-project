@@ -1,5 +1,10 @@
+/**
+ * Spillets monsterlogik og p5-loop. Normalmonsteret styrer bevægelse, helbred
+ * og tegning; BossMonster genbruger logikken med særskilt udseende og typeflag.
+ */
 let gameSpeed = 1;
 
+// Hastighedsknapperne deler gameSpeed med wave-, tårn- og monsteropdateringer.
 document.querySelectorAll("#game-speed button").forEach(button => {
   button.addEventListener("click", () => {
     gameSpeed = Number(button.dataset.speed);
@@ -10,6 +15,7 @@ document.querySelectorAll("#game-speed button").forEach(button => {
 });
 
 class Monster {
+  /** Opretter et monster ved spawnpunktet med den angivne rute. */
   constructor(x = 300, y = 240, path = []) {
     this.x = x;
     this.y = y;
@@ -27,6 +33,7 @@ class Monster {
     this.rewarded = false;
   }
 
+  /** Reducerer monsterets HP og giver kun belønning én gang ved død. */
   takeDamage(amount) {
     if (this.health <= 0) {
       return;
@@ -41,6 +48,7 @@ class Monster {
     }
   }
 
+  /** Opdaterer bevægelse og tegner monsteret, hvis det stadig er i live. */
   draw() {
     if (this.health <= 0) {
       return;
@@ -51,6 +59,7 @@ class Monster {
     this.drawMonster();
   }
 
+  /** Flytter monsteret langs ruten og registrerer ankomst til basen. */
   move(deltaSeconds) {
     let distanceToMove = this.speed * deltaSeconds;
 
@@ -85,6 +94,7 @@ class Monster {
     }
   }
 
+  /** Tegner monsterkroppen og dens aktuelle helbredsbar. */
   drawMonster() {
     if (this.health <= 0) {
       return;
@@ -109,6 +119,7 @@ class Monster {
 let monsters = [];
 let waveSpawner;
 
+/** Opretter canvas og wave-spawner, og forbinder autowave-knappen. */
 function setup() {
   const canvas = createCanvas(map[0].length * TILE_SIZE, map.length * TILE_SIZE);
   canvas.parent("game-board");
@@ -122,6 +133,7 @@ function setup() {
   });
 }
 
+/** p5-hovedloop: opdaterer waves, tårne og monstre og tegner spillet. */
 function draw() {
   drawMap();
   waveSpawner.drawStartButton();
@@ -135,6 +147,7 @@ function draw() {
   }
 }
 
+/** Sender canvas-klik videre til wave-startfladen. */
 function mousePressed() {
   if (waveSpawner && waveSpawner.startWaveAt(mouseX, mouseY)) {
     return false;
@@ -142,6 +155,7 @@ function mousePressed() {
 }
 
 class BossMonster extends Monster {
+  /** Opretter bossvarianten med bossflag og bossfarver. */
   constructor(x, y, path) {
     super(x, y, path);
     this.isBoss = true;
