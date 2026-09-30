@@ -46,7 +46,8 @@ function damagePlayer(amount) {
 	updateHealthBar();
 
 	if (playerHealth <= 0) {
-		window.location.href = "Menu/game%20over%20menu.html";
+		const completedWaves = waveSpawner.waveIndex;
+		window.location.href = `Menu/game%20over%20menu.html?waves=${completedWaves}`;
 	}
 }
 
