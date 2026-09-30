@@ -4,7 +4,7 @@ class Skud {
 		this.damage = 1;
 		this.y = y;
 		this.target = target;
-		this.speed = 4;
+		this.speed = 240;
 		this.radius = 5;
 		this.finished = false;
 	}
@@ -16,10 +16,15 @@ class Skud {
 		}
 
 		const angle = atan2(this.target.y - this.y, this.target.x - this.x);
-		this.x += cos(angle) * this.speed;
-		this.y += sin(angle) * this.speed;
+		const distanceToTarget = dist(this.x, this.y, this.target.x, this.target.y);
+		const distanceToMove = min(
+			this.speed * deltaTime / 1000 * gameSpeed,
+			distanceToTarget
+		);
+		this.x += cos(angle) * distanceToMove;
+		this.y += sin(angle) * distanceToMove;
 
-		if (dist(this.x, this.y, this.target.x, this.target.y) < this.radius + this.target.radius) {
+		if (distanceToTarget <= distanceToMove + this.radius + this.target.radius) {
 			if (typeof this.target.takeDamage === "function") {
 				this.target.takeDamage(this.damage);
 			} else {

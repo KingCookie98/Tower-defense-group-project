@@ -23,16 +23,53 @@ body {
     width: min(650px, calc(100vw - 48px));
 }
 
+#game-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
 #wave-counter {
     display: grid;
     place-items: center;
-    width: 20%;
+    min-width: 90px;
     height: 34px;
     color: #fff;
     background: #142314;
     border: 1px solid #527552;
     border-radius: 4px;
     font: 600 15px sans-serif;
+}
+
+#game-speed {
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    background: #101c25;
+    border: 1px solid #2d4c5e;
+    border-radius: 5px;
+}
+
+#game-speed button {
+    min-width: 38px;
+    height: 26px;
+    color: #c8d3da;
+    background: transparent;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    font: 600 13px sans-serif;
+}
+
+#game-speed button[aria-pressed="true"] {
+    color: #081018;
+    background: #77bce8;
+}
+
+#game-speed button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
 }
 
 canvas {

@@ -1,3 +1,14 @@
+let gameSpeed = 1;
+
+document.querySelectorAll("#game-speed button").forEach(button => {
+  button.addEventListener("click", () => {
+    gameSpeed = Number(button.dataset.speed);
+    document.querySelectorAll("#game-speed button").forEach(speedButton => {
+      speedButton.setAttribute("aria-pressed", String(speedButton === button));
+    });
+  });
+});
+
 class Monster {
   constructor(x = 300, y = 240, path = []) {
     this.x = x;
@@ -35,8 +46,8 @@ class Monster {
       return;
     }
 
-    this.move(deltaTime / 1000);
-  this.hitFlashFrames = max(0, this.hitFlashFrames - 1);
+    this.move(deltaTime / 1000 * gameSpeed);
+    this.hitFlashFrames = max(0, this.hitFlashFrames - gameSpeed);
     this.drawMonster();
   }
 
