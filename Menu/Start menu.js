@@ -1,4 +1,3 @@
-let gameStarted = false;
 let playButton;
 
 function setup() {
@@ -14,12 +13,7 @@ function setup() {
 
 function draw() {
     drawBackground();
-
-    if (gameStarted) {
-        drawGamePlaceholder();
-    } else {
-        drawStartMenu();
-    }
+    drawStartMenu();
 }
 
 function drawBackground() {
@@ -69,25 +63,9 @@ function drawStartMenu() {
     text('PLAY', width / 2, playButton.y + playButton.height / 2);
 }
 
-function drawGamePlaceholder() {
-    textAlign(CENTER, CENTER);
-    fill('#f4f7f2');
-    textSize(34);
-    text('Spillet starter her', width / 2, height / 2 - 20);
-    fill('#b9c8d2');
-    textSize(16);
-    text('Tryk R for at vende tilbage til menuen', width / 2, height / 2 + 28);
-}
-
 function mousePressed() {
-    if (!gameStarted && mouseX >= playButton.x && mouseX <= playButton.x + playButton.width
+    if (mouseX >= playButton.x && mouseX <= playButton.x + playButton.width
         && mouseY >= playButton.y && mouseY <= playButton.y + playButton.height) {
-        gameStarted = true;
-    }
-}
-
-function keyPressed() {
-    if (key === 'r' || key === 'R') {
-        gameStarted = false;
+        window.location.href = '../Game.html';
     }
 }

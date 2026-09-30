@@ -44,6 +44,10 @@ function updateHealthBar() {
 function damagePlayer(amount) {
 	playerHealth = Math.max(0, playerHealth - amount);
 	updateHealthBar();
+
+	if (playerHealth <= 0) {
+		window.location.href = "Menu/game%20over%20menu.html";
+	}
 }
 
 function checkMonsterCollision(monsterRow, monsterColumn, isBoss = false) {
