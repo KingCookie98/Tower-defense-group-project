@@ -8,6 +8,7 @@ class WaveSpawner {
 		this.path = this.buildPath(startRow, startColumn);
 		this.waveIndex = 0;
 		this.spawnedInWave = 0;
+		this.autoWave = false;
 		this.timer = 3;
 		this.waitingForStart = true;
 		this.buttonWidth = 61;
@@ -94,7 +95,12 @@ class WaveSpawner {
 
 	update(monsters) {
 		if (this.waitingForStart) {
-			return;
+			if (!this.autoWave) {
+				return;
+			}
+
+			this.waitingForStart = false;
+			this.timer = 0;
 		}
 
 		this.timer -= deltaTime / 1000 * gameSpeed;

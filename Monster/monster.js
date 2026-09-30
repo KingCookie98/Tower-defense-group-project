@@ -113,6 +113,13 @@ function setup() {
   const canvas = createCanvas(map[0].length * TILE_SIZE, map.length * TILE_SIZE);
   canvas.parent("game-board");
   waveSpawner = new WaveSpawner();
+
+  const autoWaveButton = document.getElementById("auto-wave");
+  autoWaveButton.addEventListener("click", () => {
+    waveSpawner.autoWave = !waveSpawner.autoWave;
+    autoWaveButton.setAttribute("aria-pressed", String(waveSpawner.autoWave));
+    autoWaveButton.textContent = `Auto wave: ${waveSpawner.autoWave ? "On" : "Off"}`;
+  });
 }
 
 function draw() {

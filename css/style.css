@@ -72,6 +72,27 @@ body {
     outline-offset: 2px;
 }
 
+#auto-wave {
+    height: 34px;
+    padding: 0 10px;
+    color: #c8d3da;
+    background: #101c25;
+    border: 1px solid #2d4c5e;
+    border-radius: 5px;
+    cursor: pointer;
+    font: 600 13px sans-serif;
+}
+
+#auto-wave[aria-pressed="true"] {
+    color: #081018;
+    background: #8fd18f;
+}
+
+#auto-wave:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
 canvas {
     display: block;
     width: 100% !important;
