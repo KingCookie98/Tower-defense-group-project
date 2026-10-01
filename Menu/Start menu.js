@@ -1,3 +1,5 @@
+const gamePageUrl = new URL('../Game.html', document.currentScript.src);
+
 /** p5-sketch for startmenuen; PLAY sender spilleren til Game.html. */
 let playButton;
 
@@ -72,6 +74,6 @@ function drawStartMenu() {
 function mousePressed() {
     if (mouseX >= playButton.x && mouseX <= playButton.x + playButton.width
         && mouseY >= playButton.y && mouseY <= playButton.y + playButton.height) {
-        window.location.href = 'Game.html';
+        window.location.href = gamePageUrl.href;
     }
 }
