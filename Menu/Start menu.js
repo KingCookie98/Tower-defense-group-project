@@ -72,6 +72,6 @@ function drawStartMenu() {
 function mousePressed() {
     if (mouseX >= playButton.x && mouseX <= playButton.x + playButton.width
         && mouseY >= playButton.y && mouseY <= playButton.y + playButton.height) {
-        window.location.href = '../Game.html';
+        window.location.href = 'Game.html';
     }
 }
